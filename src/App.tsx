@@ -3,7 +3,7 @@ import Index from "./pages/Index";
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/bbong-shorts/">
       <Routes>
         <Route path="/" element={<Index />} />
       </Routes>
