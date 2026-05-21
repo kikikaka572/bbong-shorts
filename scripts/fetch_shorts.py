@@ -22,20 +22,20 @@ from datetime import datetime, timezone
 #   3. UC로 시작하는 24자리 ID 복사
 # ─────────────────────────────────────────────────────────────
 CHANNELS = [
-    # 레전드 트로트
-    {"id": "UCxxxxxxxxxxxxxx01", "name": "나훈아 공식",     "category": "레전드"},
-    {"id": "UCxxxxxxxxxxxxxx02", "name": "태진아 공식",     "category": "레전드"},
-    {"id": "UCxxxxxxxxxxxxxx03", "name": "주현미 공식",     "category": "레전드"},
-    # 신트로트
-    {"id": "UCxxxxxxxxxxxxxx04", "name": "임영웅 공식",     "category": "신트로트"},
-    {"id": "UCxxxxxxxxxxxxxx05", "name": "영탁 공식",       "category": "신트로트"},
-    {"id": "UCxxxxxxxxxxxxxx06", "name": "이찬원 공식",     "category": "신트로트"},
-    # 오디션
-    {"id": "UCxxxxxxxxxxxxxx07", "name": "미스터트롯 공식", "category": "오디션"},
-    {"id": "UCxxxxxxxxxxxxxx08", "name": "미스트롯 공식",   "category": "오디션"},
-    # 커버
-    {"id": "UCxxxxxxxxxxxxxx09", "name": "트로트커버채널1", "category": "커버"},
-    {"id": "UCxxxxxxxxxxxxxx10", "name": "트로트커버채널2", "category": "커버"},
+    # 신트로트 (확인 완료 ✅)
+    {"id": "UC3WZlO2Zl8NE1yIUgtwUtQw", "name": "임영웅",        "category": "신트로트"},
+    {"id": "UCH7JoVNZFpo1pOzZH-t5uew", "name": "영탁의 불쑥TV", "category": "신트로트"},
+    {"id": "UC4UnP3v-iaFaLdtKwp84Pmw", "name": "이찬원",        "category": "신트로트"},
+    {"id": "UCrLQ0ovys23H9xBV6U-Sd4A", "name": "정동원(JD1)",   "category": "신트로트"},
+    {"id": "UC3pa6gfuBooj8WUlluD-nNg", "name": "장민호",        "category": "신트로트"},
+    # 신트로트 (⚠️ 채널 ID 직접 확인 후 교체)
+    {"id": "UCxxxxxxxxxxxxxx06",        "name": "송가인",        "category": "신트로트"},
+    # 레전드 (⚠️ 채널 ID 직접 확인 후 교체)
+    {"id": "UCxxxxxxxxxxxxxx07",        "name": "나훈아",        "category": "레전드"},
+    {"id": "UCxxxxxxxxxxxxxx08",        "name": "태진아",        "category": "레전드"},
+    {"id": "UCxxxxxxxxxxxxxx09",        "name": "주현미",        "category": "레전드"},
+    # 오디션 (⚠️ 채널 ID 직접 확인 후 교체)
+    {"id": "UCxxxxxxxxxxxxxx10",        "name": "TV조선 트로트", "category": "오디션"},
 ]
 
 MAX_PER_CHANNEL  = 20    # 채널당 최대 수집 수

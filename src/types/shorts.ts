@@ -16,5 +16,5 @@ export interface Short {
   fetched_at: string;
 }
 
-export const CATEGORIES: Category[] = ["전체", "레전드", "신트로트", "오디션", "커버"];
+export const CATEGORIES: Category[] = ["전체", "신트로트", "레전드", "오디션", "커버"];
 export const PAGE_SIZE = 20;
