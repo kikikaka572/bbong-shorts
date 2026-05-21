@@ -29,10 +29,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
       - name: 의존성 설치
-        run: npm install --no-package-lock
+        run: npm install
 
       - name: 빌드
         env:
