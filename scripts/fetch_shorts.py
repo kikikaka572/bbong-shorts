@@ -131,7 +131,7 @@ def fetch_shorts(video_ids: list[str], channel_name: str, channel_id: str, categ
 def supabase_upsert(rows: list[dict]) -> None:
     if not rows:
         return
-    url     = f"{SUPABASE_URL}/rest/v1/shorts"
+    url     = f"{SUPABASE_URL}/rest/v1/shorts?on_conflict=youtube_id"
     headers = {
         "apikey":        SUPABASE_SERVICE_KEY,
         "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
