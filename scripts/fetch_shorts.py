@@ -31,12 +31,7 @@ CHANNELS = [
     {"id": "UCH7JoVNZFpo1pOzZH-t5uew", "name": "영탁의 불쑥TV", "category": "영탁"},
     {"id": "UC4UnP3v-iaFaLdtKwp84Pmw", "name": "이찬원",        "category": "이찬원"},
     {"id": "UCrLQ0ovys23H9xBV6U-Sd4A", "name": "정동원(JD1)",   "category": "정동원"},
-    {"id": "UC3pa6gfuBooj8WUlluD-nNg", "name": "장민호",        "category": "장민호"},
     {"id": "UCJ-8qxJb6_YCLIS1Fwb0aZw", "name": "송가인",        "category": "송가인"},
-    # 레전드
-    {"id": "UCinLAxOjNufO_gIiEAuBf5g", "name": "나훈아",        "category": "나훈아"},
-    {"id": "UCq_EUfj7wDnd1lOGEq8-6Gw", "name": "태진아",        "category": "태진아"},
-    {"id": "UCEDXalKckJ-JqVCjusmHm3g", "name": "주현미 TV",     "category": "주현미"},
     # 방송
     {"id": "UC33yEDM8q3N8BeMpZMdP66Q", "name": "TVCHOSUN MUSIC","category": "TV조선"},
 ]
