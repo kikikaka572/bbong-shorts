@@ -25,6 +25,7 @@ export default function Player() {
   const [dragY, setDragY] = useState(0);
   const [dragging, setDragging] = useState(false);
   const [snapTarget, setSnapTarget] = useState<number | null>(null);
+  const [skipTransition, setSkipTransition] = useState(false);
 
   const touchYRef = useRef<number | null>(null);
   const dragYRef = useRef(0);
@@ -48,6 +49,7 @@ export default function Player() {
     touchYRef.current = e.touches[0].clientY;
     dragYRef.current = 0;
     setDragging(true);
+    setSkipTransition(false);
     setSnapTarget(null);
     snapRef.current = null;
   };
@@ -81,12 +83,14 @@ export default function Player() {
   // 슬롯 0 (현재)의 transition 완료 시 인덱스 업데이트
   const onTransitionEnd = () => {
     const snap = snapRef.current;
+    setSkipTransition(true);
     if (snap === -vh) setIndex((i) => i + 1);
     else if (snap === vh) setIndex((i) => i - 1);
     snapRef.current = null;
     setSnapTarget(null);
     setDragY(0);
     dragYRef.current = 0;
+    requestAnimationFrame(() => requestAnimationFrame(() => setSkipTransition(false)));
   };
 
   const slotY = (slot: -1 | 0 | 1): number => {
@@ -94,7 +98,7 @@ export default function Player() {
     return slot * vh + offset;
   };
 
-  const transition = dragging
+  const transition = (dragging || skipTransition)
     ? "none"
     : "transform 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
 
