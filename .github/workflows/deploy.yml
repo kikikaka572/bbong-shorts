@@ -1,58 +1,15 @@
-name: GitHub Pages 배포
+name: 데이터 수집 트리거
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: true
-
+# Vercel이 GitHub 연동으로 자동 배포하므로 별도 배포 스텝 불필요
+# 이 파일은 향후 추가 자동화를 위한 자리 보존용
 jobs:
-  deploy:
+  placeholder:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
     steps:
-      - name: 코드 체크아웃
-        uses: actions/checkout@v4
-
-      - name: Node.js 20 설정
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: 의존성 설치
-        run: npm install
-
-      - name: 빌드
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-        run: npm run build
-
-      - name: SPA 404 처리
-        run: cp dist/index.html dist/404.html
-
-      - name: Jekyll 비활성화
-        run: touch dist/.nojekyll
-
-      - name: Pages 설정
-        uses: actions/configure-pages@v5
-
-      - name: 아티팩트 업로드
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-
-      - name: 배포
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: 완료
+        run: echo "Vercel이 자동 배포 처리"

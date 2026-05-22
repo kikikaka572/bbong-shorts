@@ -4,7 +4,7 @@ import Player from "./pages/Player";
 
 function App() {
   return (
-    <BrowserRouter basename="/bbong-shorts/">
+    <BrowserRouter>
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/shorts" element={<Player />} />
