@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ArrowLeft, ExternalLink, Play } from "lucide-react";
-import { useShorts } from "@/hooks/useShorts";
+import { useShorts, incrementClick } from "@/hooks/useShorts";
 import { fmtViews, fmtDuration } from "@/lib/utils";
 import type { Category, Short } from "@/types/shorts";
 
@@ -35,6 +35,8 @@ export default function Player() {
   const lastWheelRef = useRef(0);
   const hasNextRef = useRef(false);
   const hasPrevRef = useRef(false);
+  const indexRef = useRef(0);
+  const itemsRef = useRef<Short[]>([]);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useShorts(category);
   const items: Short[] = data?.pages.flatMap((p) => p) ?? [];
@@ -45,6 +47,8 @@ export default function Player() {
 
   hasNextRef.current = hasNext;
   hasPrevRef.current = hasPrev;
+  indexRef.current = index;
+  itemsRef.current = items;
 
   // 끝 근처에서 추가 로드
   useEffect(() => {
@@ -55,6 +59,8 @@ export default function Player() {
 
   const goNext = () => {
     if (!hasNextRef.current) return;
+    const next = itemsRef.current[indexRef.current + 1];
+    if (next) incrementClick(next.id);
     snapRef.current = -vh;
     setSkipTransition(false);
     setSnapTarget(-vh);
@@ -62,6 +68,8 @@ export default function Player() {
 
   const goPrev = () => {
     if (!hasPrevRef.current) return;
+    const prev = itemsRef.current[indexRef.current - 1];
+    if (prev) incrementClick(prev.id);
     snapRef.current = vh;
     setSkipTransition(false);
     setSnapTarget(vh);
