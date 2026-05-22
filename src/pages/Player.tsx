@@ -32,6 +32,9 @@ export default function Player() {
   const touchYRef = useRef<number | null>(null);
   const dragYRef = useRef(0);
   const snapRef = useRef<number | null>(null);
+  const lastWheelRef = useRef(0);
+  const hasNextRef = useRef(false);
+  const hasPrevRef = useRef(false);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useShorts(category);
   const items: Short[] = data?.pages.flatMap((p) => p) ?? [];
@@ -40,12 +43,48 @@ export default function Player() {
   const hasNext = index < items.length - 1;
   const hasPrev = index > 0;
 
+  hasNextRef.current = hasNext;
+  hasPrevRef.current = hasPrev;
+
   // 끝 근처에서 추가 로드
   useEffect(() => {
     if (index >= items.length - 3 && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
   }, [index, items.length, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const goNext = () => {
+    if (!hasNextRef.current) return;
+    snapRef.current = -vh;
+    setSkipTransition(false);
+    setSnapTarget(-vh);
+  };
+
+  const goPrev = () => {
+    if (!hasPrevRef.current) return;
+    snapRef.current = vh;
+    setSkipTransition(false);
+    setSnapTarget(vh);
+  };
+
+  // 마우스 휠 스크롤
+  const onWheel = (e: React.WheelEvent) => {
+    const now = Date.now();
+    if (now - lastWheelRef.current < 600) return;
+    lastWheelRef.current = now;
+    if (e.deltaY > 0) goNext();
+    else if (e.deltaY < 0) goPrev();
+  };
+
+  // 키보드 방향키
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowDown") goNext();
+      else if (e.key === "ArrowUp") goPrev();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   const onTouchStart = (e: React.TouchEvent) => {
     touchYRef.current = e.touches[0].clientY;
@@ -71,11 +110,9 @@ export default function Player() {
     touchYRef.current = null;
 
     if (d < -THRESHOLD && hasNext) {
-      snapRef.current = -vh;
-      setSnapTarget(-vh);
+      goNext();
     } else if (d > THRESHOLD && hasPrev) {
-      snapRef.current = vh;
-      setSnapTarget(vh);
+      goPrev();
     } else {
       snapRef.current = 0;
       setSnapTarget(0);
@@ -118,6 +155,7 @@ export default function Player() {
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
+      onWheel={onWheel}
       style={{ touchAction: "none" }}
     >
       {SLOTS.map((slot) => {
