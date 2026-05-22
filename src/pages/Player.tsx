@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ArrowLeft, ExternalLink, Play } from "lucide-react";
 import { useShorts, incrementClick } from "@/hooks/useShorts";
+import { ShareButton } from "@/components/ShareButton";
 import { fmtViews, fmtDuration } from "@/lib/utils";
 import type { Category, Short } from "@/types/shorts";
 
@@ -203,6 +204,12 @@ export default function Player() {
       >
         {index + 1} / {items.length}
       </div>
+
+      <ShareButton
+        title={items[index]?.title}
+        text={`${items[index]?.channel_name} - ${items[index]?.title}`}
+        url={items[index]?.url}
+      />
     </div>
   );
 }

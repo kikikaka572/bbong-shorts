@@ -5,6 +5,7 @@ import { CategoryTabs } from "@/components/CategoryTabs";
 import { ShortsGrid } from "@/components/ShortsGrid";
 import { AdBanner } from "@/components/AdBanner";
 import { useShorts, useShortsCount, incrementClick } from "@/hooks/useShorts";
+import { ShareButton } from "@/components/ShareButton";
 import type { Category, Short } from "@/types/shorts";
 
 export default function Index() {
@@ -61,6 +62,10 @@ export default function Index() {
           onSelect={handleSelect}
         />
       </main>
+      <ShareButton
+        title={category === "전체" ? "뽕쇼츠 - 트로트 쇼츠 모아보기" : `뽕쇼츠 - ${category} 쇼츠 모아보기`}
+        text={`${category === "전체" ? "임영웅, 영탁, 이찬원, 정동원, 송가인" : category} 트로트 쇼츠 한 곳에서! 🔥`}
+      />
     </div>
   );
 }
