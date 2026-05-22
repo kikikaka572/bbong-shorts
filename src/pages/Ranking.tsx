@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Play } from "lucide-react";
 import { Header } from "@/components/Header";
@@ -6,11 +7,45 @@ import type { Short } from "@/types/shorts";
 
 const MEDALS = ["🥇", "🥈", "🥉"];
 const ARTIST_COLORS = ["#e8453c", "#f59e0b", "#8b5cf6", "#10b981", "#3b82f6", "#ec4899", "#f97316"];
+const INTERVAL_SEC = 30 * 60;
+
+function getSecondsUntilNext(): number {
+  const now = new Date();
+  const elapsed = now.getMinutes() * 60 + now.getSeconds();
+  return INTERVAL_SEC - (elapsed % INTERVAL_SEC);
+}
+
+function useCountdown(onExpire: () => void) {
+  const [remaining, setRemaining] = useState(getSecondsUntilNext);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setRemaining(prev => {
+        if (prev <= 1) {
+          onExpire();
+          return getSecondsUntilNext();
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [onExpire]);
+
+  return {
+    mins: String(Math.floor(remaining / 60)).padStart(2, "0"),
+    secs: String(remaining % 60).padStart(2, "0"),
+  };
+}
 
 export default function Ranking() {
   const navigate = useNavigate();
-  const { data: shorts = [], isLoading: shortsLoading } = useRanking(20);
-  const { data: artists = [], isLoading: artistsLoading } = useArtistRanking();
+  const { data: shorts = [], isLoading: shortsLoading, refetch: refetchShorts } = useRanking(20);
+  const { data: artists = [], isLoading: artistsLoading, refetch: refetchArtists } = useArtistRanking();
+
+  const { mins, secs } = useCountdown(() => {
+    refetchShorts();
+    refetchArtists();
+  });
 
   const rankedShorts = shorts.filter(s => (s.click_count ?? 0) > 0);
   const rankedArtists = artists.filter(a => a.total_clicks > 0);
@@ -27,12 +62,16 @@ export default function Ranking() {
       <main className="mx-auto max-w-[900px] px-5 py-6 pb-16">
 
         {/* 타이틀 */}
-        <div className="mb-6 flex items-center gap-2">
-          <span className="text-2xl">🔥</span>
-          <h1 className="text-xl font-bold">클릭 랭킹</h1>
-          <span className="ml-1 rounded-full bg-[#e8453c]/10 px-2 py-0.5 text-[11px] font-semibold text-[#e8453c]">
-            실시간
-          </span>
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">🔥</span>
+            <h1 className="text-xl font-bold">클릭 랭킹</h1>
+          </div>
+          <div className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-[12px] text-muted-foreground">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#e8453c]" />
+            다음 갱신까지&nbsp;
+            <span className="font-bold tabular-nums text-foreground">{mins}분 {secs}초</span>
+          </div>
         </div>
 
         {isEmpty ? (
