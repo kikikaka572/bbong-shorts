@@ -15,5 +15,18 @@ BEGIN
 END;
 $$;
 
+-- 아티스트별 총 클릭수 집계 함수
+CREATE OR REPLACE FUNCTION get_artist_ranking()
+RETURNS TABLE(category TEXT, total_clicks BIGINT)
+LANGUAGE sql
+SECURITY DEFINER
+AS $$
+  SELECT category, SUM(click_count) AS total_clicks
+  FROM shorts
+  GROUP BY category
+  ORDER BY total_clicks DESC;
+$$;
+
 -- 익명 사용자도 RPC 호출 허용
 GRANT EXECUTE ON FUNCTION increment_click(UUID) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION get_artist_ranking() TO anon, authenticated;

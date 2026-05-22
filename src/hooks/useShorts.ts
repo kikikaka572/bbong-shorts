@@ -18,7 +18,23 @@ export function useRanking(limit = 20) {
       if (error) throw error;
       return (data ?? []) as Short[];
     },
-    staleTime: 1000 * 60,
+    staleTime: 1000 * 30,
+    refetchInterval: 1000 * 30,
+  });
+}
+
+export type ArtistRank = { category: string; total_clicks: number };
+
+export function useArtistRanking() {
+  return useQuery({
+    queryKey: ["artist-ranking"],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_artist_ranking");
+      if (error) throw error;
+      return (data ?? []) as ArtistRank[];
+    },
+    staleTime: 1000 * 30,
+    refetchInterval: 1000 * 30,
   });
 }
 

@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { Header } from "@/components/Header";
+import { RankingTicker } from "@/components/RankingTicker";
 import { CategoryTabs } from "@/components/CategoryTabs";
 import { ShortsGrid } from "@/components/ShortsGrid";
 import { AdBanner } from "@/components/AdBanner";
@@ -39,6 +40,7 @@ export default function Index() {
   return (
     <div className="min-h-screen">
       <Header />
+      <RankingTicker />
       <CategoryTabs active={category} onChange={handleCategoryChange} />
 
       <main className="mx-auto max-w-[1400px] px-5 py-5 pb-16">
