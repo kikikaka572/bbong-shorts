@@ -72,6 +72,13 @@ export function ShortsCard({ short, onClick }: ShortsCardProps) {
           </span>
         )}
 
+        {/* Click count badge */}
+        {(short.click_count ?? 0) > 0 && (
+          <span className="absolute bottom-2 left-2 flex items-center gap-0.5 rounded bg-black/75 px-1.5 py-0.5 text-[11px] font-semibold text-[#ff7b54]">
+            🔥 {(short.click_count!).toLocaleString()}
+          </span>
+        )}
+
         {/* Duration badge */}
         <span className="absolute bottom-2 right-2 rounded bg-black/75 px-1.5 py-0.5 text-[11px] text-white">
           {fmtDuration(short.duration)}

@@ -15,6 +15,7 @@ export interface Short {
   url: string;
   fetched_at: string;
   created_at?: string | null;
+  click_count?: number;
 }
 
 // fetch_shorts.py의 CHANNELS category 필드와 순서를 맞춰 유지

@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "Set-Location C:\\Users\\momo\\Documents\\bbong-shorts; git pull 2>&1",
+            "shell": "powershell",
+            "statusMessage": "GitHub 최신 코드 가져오는 중...",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

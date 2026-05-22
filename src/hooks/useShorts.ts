@@ -2,6 +2,26 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { type Category, type Short, PAGE_SIZE } from "@/types/shorts";
 
+export async function incrementClick(shortId: string) {
+  await supabase.rpc("increment_click", { short_id: shortId });
+}
+
+export function useRanking(limit = 20) {
+  return useQuery({
+    queryKey: ["ranking", limit],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("shorts")
+        .select("*")
+        .order("click_count", { ascending: false })
+        .limit(limit);
+      if (error) throw error;
+      return (data ?? []) as Short[];
+    },
+    staleTime: 1000 * 60,
+  });
+}
+
 // Total count for a given category (for stats display)
 export function useShortsCount(category: Category) {
   return useQuery({

@@ -3,7 +3,7 @@ import { Header } from "@/components/Header";
 import { CategoryTabs } from "@/components/CategoryTabs";
 import { ShortsGrid } from "@/components/ShortsGrid";
 import { AdBanner } from "@/components/AdBanner";
-import { useShorts, useShortsCount } from "@/hooks/useShorts";
+import { useShorts, useShortsCount, incrementClick } from "@/hooks/useShorts";
 import type { Category, Short } from "@/types/shorts";
 
 export default function Index() {
@@ -31,6 +31,7 @@ export default function Index() {
   const handleSelect = (short: Short) => {
     const idx = allItems.findIndex((s) => s.id === short.id);
     if (idx < 0) return;
+    incrementClick(short.id);
     const base = category === "전체" ? "" : `/${encodeURIComponent(category)}`;
     navigate(`${base}/play?index=${idx}`);
   };
