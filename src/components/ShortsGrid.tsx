@@ -1,21 +1,28 @@
 import { useEffect, useRef } from "react";
 import { ShortsCard } from "./ShortsCard";
-import { useShorts } from "@/hooks/useShorts";
-import type { Category, Short } from "@/types/shorts";
+import type { Short } from "@/types/shorts";
 
 interface ShortsGridProps {
-  category: Category;
+  items: Short[];
+  isLoading: boolean;
+  isError: boolean;
+  isFetchingNextPage: boolean;
+  hasNextPage: boolean | undefined;
+  fetchNextPage: () => void;
   onSelect: (short: Short) => void;
 }
 
-export function ShortsGrid({ category, onSelect }: ShortsGridProps) {
+export function ShortsGrid({
+  items,
+  isLoading,
+  isError,
+  isFetchingNextPage,
+  hasNextPage,
+  fetchNextPage,
+  onSelect,
+}: ShortsGridProps) {
   const sentinelRef = useRef<HTMLDivElement>(null);
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError } =
-    useShorts(category);
 
-  const items = data?.pages.flatMap((p) => p) ?? [];
-
-  // Infinite scroll via IntersectionObserver
   useEffect(() => {
     const el = sentinelRef.current;
     if (!el) return;
@@ -67,7 +74,6 @@ export function ShortsGrid({ category, onSelect }: ShortsGridProps) {
         ))}
       </div>
 
-      {/* Sentinel for infinite scroll */}
       <div ref={sentinelRef} className="h-px mt-5" />
 
       {isFetchingNextPage && (
