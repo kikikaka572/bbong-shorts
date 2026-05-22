@@ -221,7 +221,7 @@ function Slide({ short, active }: { short: Short; active: boolean }) {
       {active ? (
         <iframe
           key={short.youtube_id}
-          src={`https://www.youtube.com/embed/${short.youtube_id}?autoplay=1&rel=0`}
+          src={`https://www.youtube.com/embed/${short.youtube_id}?autoplay=1&rel=0&controls=0`}
           className="absolute inset-0 h-full w-full border-none"
           allow="autoplay; encrypted-media"
           allowFullScreen
