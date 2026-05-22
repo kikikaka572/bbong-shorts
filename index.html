@@ -3,12 +3,122 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>뽕쇼츠 - 트로트 쇼츠 전문</title>
-    <meta name="description" content="트로트 최신 쇼츠를 한 곳에서. 레전드부터 신트로트까지." />
-    <meta property="og:title" content="뽕쇼츠 - 트로트 쇼츠 전문" />
-    <meta property="og:description" content="트로트 최신 쇼츠를 한 곳에서 즐기세요." />
+
+    <!-- SEO 기본 -->
+    <title>뽕쇼츠 - 트로트 쇼츠 모아보기 | 임영웅 영탁 이찬원 정동원 송가인</title>
+    <meta name="description" content="임영웅, 영탁, 이찬원, 정동원, 송가인 등 인기 트로트 스타의 유튜브 쇼츠를 한 곳에서. 매일 자동 업데이트되는 트로트 쇼츠 전문 큐레이션 사이트." />
+    <meta name="keywords" content="트로트 쇼츠, 임영웅 쇼츠, 영탁 쇼츠, 이찬원 쇼츠, 정동원 쇼츠, 송가인 쇼츠, 트로트 유튜브, 뽕쇼츠" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://bbong-shorts.vercel.app/" />
+
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://bbong-shorts.vercel.app/" />
+    <meta property="og:title" content="뽕쇼츠 - 트로트 쇼츠 모아보기" />
+    <meta property="og:description" content="임영웅, 영탁, 이찬원, 정동원, 송가인 등 인기 트로트 스타의 유튜브 쇼츠를 한 곳에서 모아보세요." />
+    <meta property="og:image" content="https://bbong-shorts.vercel.app/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:site_name" content="뽕쇼츠" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="뽕쇼츠 - 트로트 쇼츠 모아보기" />
+    <meta name="twitter:description" content="임영웅, 영탁, 이찬원, 정동원, 송가인 트로트 쇼츠 한 곳에서." />
+    <meta name="twitter:image" content="https://bbong-shorts.vercel.app/og-image.png" />
+
+    <!-- 파비콘 -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- JSON-LD 구조화 데이터 (SEO + AEO) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://bbong-shorts.vercel.app/#website",
+          "url": "https://bbong-shorts.vercel.app/",
+          "name": "뽕쇼츠",
+          "description": "트로트 유튜브 쇼츠 큐레이션 사이트",
+          "inLanguage": "ko-KR",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://bbong-shorts.vercel.app/?category={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "CollectionPage",
+          "@id": "https://bbong-shorts.vercel.app/#page",
+          "url": "https://bbong-shorts.vercel.app/",
+          "name": "뽕쇼츠 - 트로트 쇼츠 모아보기",
+          "description": "임영웅, 영탁, 이찬원, 정동원, 송가인 등 인기 트로트 스타의 유튜브 쇼츠 큐레이션",
+          "inLanguage": "ko-KR",
+          "isPartOf": { "@id": "https://bbong-shorts.vercel.app/#website" },
+          "about": {
+            "@type": "Thing",
+            "name": "트로트",
+            "description": "한국 대중음악 장르 트로트의 유튜브 쇼츠 콘텐츠"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "뽕쇼츠는 어떤 사이트인가요?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "뽕쇼츠는 임영웅, 영탁, 이찬원, 정동원, 송가인 등 인기 트로트 스타의 유튜브 쇼츠를 자동으로 수집하여 한 곳에서 모아볼 수 있는 트로트 쇼츠 큐레이션 사이트입니다."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "어떤 트로트 가수의 쇼츠를 볼 수 있나요?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "임영웅, 영탁, 이찬원, 정동원, 송가인, TV조선 채널의 쇼츠를 제공합니다. 카테고리 탭에서 원하는 가수를 선택해 해당 가수의 쇼츠만 모아볼 수 있습니다."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "뽕쇼츠는 얼마나 자주 업데이트되나요?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "유튜브 쇼츠 데이터는 매일 3시간마다 자동으로 수집되어 업데이트됩니다. 최신 쇼츠를 빠르게 확인할 수 있습니다."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "임영웅 최신 쇼츠는 어디서 볼 수 있나요?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "뽕쇼츠(bbong-shorts.vercel.app)에서 '임영웅' 카테고리를 선택하면 임영웅의 최신 유튜브 쇼츠를 모아볼 수 있습니다."
+              }
+            }
+          ]
+        },
+        {
+          "@type": "ItemList",
+          "name": "트로트 아티스트 카테고리",
+          "description": "뽕쇼츠에서 제공하는 트로트 아티스트 목록",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "임영웅 쇼츠" },
+            { "@type": "ListItem", "position": 2, "name": "영탁 쇼츠" },
+            { "@type": "ListItem", "position": 3, "name": "이찬원 쇼츠" },
+            { "@type": "ListItem", "position": 4, "name": "정동원 쇼츠" },
+            { "@type": "ListItem", "position": 5, "name": "송가인 쇼츠" },
+            { "@type": "ListItem", "position": 6, "name": "TV조선 쇼츠" }
+          ]
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>
