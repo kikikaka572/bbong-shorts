@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { CategoryTabs } from "@/components/CategoryTabs";
 import { ShortsGrid } from "@/components/ShortsGrid";
@@ -9,7 +8,8 @@ import type { Category, Short } from "@/types/shorts";
 
 export default function Index() {
   const navigate = useNavigate();
-  const [category, setCategory] = useState<Category>("전체");
+  const { category: categoryParam } = useParams<{ category: string }>();
+  const category: Category = categoryParam ? decodeURIComponent(categoryParam) : "전체";
 
   const { data: count } = useShortsCount(category);
   const {
@@ -23,16 +23,22 @@ export default function Index() {
 
   const allItems: Short[] = data?.pages.flatMap((p) => p) ?? [];
 
+  const handleCategoryChange = (newCategory: Category) => {
+    if (newCategory === "전체") navigate("/");
+    else navigate(`/${encodeURIComponent(newCategory)}`);
+  };
+
   const handleSelect = (short: Short) => {
     const idx = allItems.findIndex((s) => s.id === short.id);
     if (idx < 0) return;
-    navigate(`/shorts?category=${encodeURIComponent(category)}&index=${idx}`);
+    const base = category === "전체" ? "" : `/${encodeURIComponent(category)}`;
+    navigate(`${base}/play?index=${idx}`);
   };
 
   return (
     <div className="min-h-screen">
       <Header />
-      <CategoryTabs active={category} onChange={setCategory} />
+      <CategoryTabs active={category} onChange={handleCategoryChange} />
 
       <main className="mx-auto max-w-[1400px] px-5 py-5 pb-16">
         <div className="mb-5">

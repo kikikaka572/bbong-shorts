@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ArrowLeft, ExternalLink, Play } from "lucide-react";
 import { useShorts } from "@/hooks/useShorts";
 import { fmtViews, fmtDuration } from "@/lib/utils";
@@ -18,8 +18,9 @@ function categoryColor(category: string): string {
 
 export default function Player() {
   const navigate = useNavigate();
+  const { category: categoryParam } = useParams<{ category: string }>();
   const [searchParams] = useSearchParams();
-  const category = (searchParams.get("category") ?? "전체") as Category;
+  const category = (categoryParam ? decodeURIComponent(categoryParam) : "전체") as Category;
   const startIndex = parseInt(searchParams.get("index") ?? "0", 10);
 
   const [index, setIndex] = useState(startIndex);
