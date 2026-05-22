@@ -17,6 +17,7 @@ export interface Short {
   created_at?: string | null;
 }
 
+// fetch_shorts.py의 CHANNELS category 필드와 순서를 맞춰 유지
 export const CATEGORIES: Category[] = [
   "전체",
   "임영웅",

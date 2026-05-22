@@ -20,20 +20,25 @@ from datetime import datetime, timezone
 # channel_id 확인법:
 #   1. 채널 페이지 접속 → 소스(Ctrl+U) → "channelId" 검색
 #   2. UC로 시작하는 24자리 ID 복사
+#
+# ⚠️ 연예인 추가 방법:
+#   CHANNELS 배열에 항목 하나만 추가하면 끝
+#   {"id": "UC...", "name": "채널명", "category": "연예인명"}
 # ─────────────────────────────────────────────────────────────
 CHANNELS = [
-    # ✅ 채널 ID 확인 완료
+    # 신트로트
     {"id": "UC3WZlO2Zl8NE1yIUgtwUtQw", "name": "임영웅",        "category": "임영웅"},
     {"id": "UCH7JoVNZFpo1pOzZH-t5uew", "name": "영탁의 불쑥TV", "category": "영탁"},
     {"id": "UC4UnP3v-iaFaLdtKwp84Pmw", "name": "이찬원",        "category": "이찬원"},
     {"id": "UCrLQ0ovys23H9xBV6U-Sd4A", "name": "정동원(JD1)",   "category": "정동원"},
     {"id": "UC3pa6gfuBooj8WUlluD-nNg", "name": "장민호",        "category": "장민호"},
-    # ⚠️ 채널 ID 직접 확인 후 교체
-    {"id": "UCxxxxxxxxxxxxxx06",        "name": "송가인",        "category": "송가인"},
-    {"id": "UCxxxxxxxxxxxxxx07",        "name": "나훈아",        "category": "나훈아"},
-    {"id": "UCxxxxxxxxxxxxxx08",        "name": "태진아",        "category": "태진아"},
-    {"id": "UCxxxxxxxxxxxxxx09",        "name": "주현미",        "category": "주현미"},
-    {"id": "UCxxxxxxxxxxxxxx10",        "name": "TV조선 트로트", "category": "TV조선"},
+    {"id": "UCJ-8qxJb6_YCLIS1Fwb0aZw", "name": "송가인",        "category": "송가인"},
+    # 레전드
+    {"id": "UCinLAxOjNufO_gIiEAuBf5g", "name": "나훈아",        "category": "나훈아"},
+    {"id": "UCq_EUfj7wDnd1lOGEq8-6Gw", "name": "태진아",        "category": "태진아"},
+    {"id": "UCEDXalKckJ-JqVCjusmHm3g", "name": "주현미 TV",     "category": "주현미"},
+    # 방송
+    {"id": "UC33yEDM8q3N8BeMpZMdP66Q", "name": "TVCHOSUN MUSIC","category": "TV조선"},
 ]
 
 MAX_PER_CHANNEL  = 20    # 채널당 최대 수집 수
@@ -44,10 +49,10 @@ MAX_DURATION_SEC = 60    # 쇼츠 기준 (60초 이하)
 QUOTA_BUDGET = 9_000
 # 엔드포인트별 단위 비용 (공식 문서 기준)
 QUOTA_COST = {
-    "channels":     1,
+    "channels":      1,
     "playlistItems": 1,
-    "videos":       1,
-    "search":       100,  # search는 비용이 높으므로 사용 자제
+    "videos":        1,
+    "search":        100,  # 비용이 높으므로 사용 자제
 }
 
 YOUTUBE_API_KEY      = os.environ.get("YOUTUBE_API_KEY", "")
@@ -145,18 +150,40 @@ def fetch_shorts(video_ids: list[str], channel_name: str, channel_id: str, categ
 
 
 # ─────────────────────────────────────────────────────────────
-# Supabase upsert (REST API, no extra dependency)
+# Supabase helpers
 # ─────────────────────────────────────────────────────────────
+def supabase_headers() -> dict:
+    return {
+        "apikey":        SUPABASE_SERVICE_KEY,
+        "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
+        "Content-Type":  "application/json",
+    }
+
+
+def migrate_categories() -> None:
+    """channel_youtube_id 기준으로 기존 shorts의 category를 연예인명으로 업데이트"""
+    print("\n기존 데이터 카테고리 마이그레이션 중...")
+    headers = supabase_headers()
+    for ch in CHANNELS:
+        r = requests.patch(
+            f"{SUPABASE_URL}/rest/v1/shorts",
+            headers=headers,
+            params={"channel_youtube_id": f"eq.{ch['id']}"},
+            data=json.dumps({"category": ch["category"]}),
+            timeout=15,
+        )
+        if r.ok:
+            print(f"  → {ch['category']} 카테고리 업데이트 완료")
+        else:
+            print(f"  ✗ {ch['category']} 업데이트 실패: {r.status_code} {r.text[:80]}")
+
+
 def supabase_upsert(rows: list[dict]) -> None:
     if not rows:
         return
     url     = f"{SUPABASE_URL}/rest/v1/shorts?on_conflict=youtube_id"
-    headers = {
-        "apikey":        SUPABASE_SERVICE_KEY,
-        "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
-        "Content-Type":  "application/json",
-        "Prefer":        "resolution=merge-duplicates",
-    }
+    headers = supabase_headers()
+    headers["Prefer"] = "resolution=merge-duplicates"
     for i in range(0, len(rows), 500):
         chunk = rows[i : i + 500]
         r = requests.post(url, headers=headers, data=json.dumps(chunk), timeout=30)
@@ -173,11 +200,14 @@ def main() -> None:
     if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
         raise ValueError("SUPABASE_URL 또는 SUPABASE_SERVICE_ROLE_KEY 환경변수가 없습니다.")
 
-    print(f"YouTube API 할당량 한도: {QUOTA_BUDGET} units (일일 10,000 units의 90%)")
+    # 기존 데이터 카테고리를 연예인명으로 먼저 업데이트
+    migrate_categories()
+
+    print(f"\nYouTube API 할당량 한도: {QUOTA_BUDGET} units (일일 10,000 units의 90%)")
     all_shorts: list[dict] = []
 
     for ch in CHANNELS:
-        print(f"[{ch['category']}] {ch['name']} 수집 중... (누적 {_quota_used} units)")
+        print(f"\n[{ch['category']}] {ch['name']} 수집 중... (누적 {_quota_used} units)")
         try:
             playlist_id = get_uploads_playlist(ch["id"])
             if not playlist_id:
