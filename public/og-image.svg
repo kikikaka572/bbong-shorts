@@ -1,0 +1,44 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f0520"/>
+      <stop offset="100%" stop-color="#1a0a3e"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#c026d3"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- 장식 원 -->
+  <circle cx="120" cy="120" r="320" fill="#c026d3" opacity="0.06"/>
+  <circle cx="1080" cy="510" r="280" fill="#7c3aed" opacity="0.08"/>
+  <circle cx="600" cy="315" r="500" fill="#4c1d95" opacity="0.04"/>
+
+  <!-- 상단 강조선 -->
+  <rect x="0" y="0" width="1200" height="4" fill="url(#accent)"/>
+
+  <!-- 메인 타이틀 -->
+  <text x="600" y="230" font-family="'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕',sans-serif" font-size="110" font-weight="900" fill="white" text-anchor="middle" letter-spacing="-2">뽕쇼츠</text>
+
+  <!-- 서브타이틀 -->
+  <text x="600" y="305" font-family="'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕',sans-serif" font-size="34" fill="#d8b4fe" text-anchor="middle" letter-spacing="4">트로트 쇼츠 모아보기</text>
+
+  <!-- 구분선 -->
+  <rect x="380" y="345" width="440" height="2" fill="url(#accent)" rx="1"/>
+
+  <!-- 아티스트 목록 -->
+  <text x="600" y="415" font-family="'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕',sans-serif" font-size="30" fill="#a78bfa" text-anchor="middle">임영웅 · 영탁 · 이찬원 · 정동원 · 송가인</text>
+
+  <!-- 설명 -->
+  <text x="600" y="470" font-family="'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕',sans-serif" font-size="22" fill="#6d28d9" text-anchor="middle">매일 자동 업데이트되는 트로트 쇼츠 전문 큐레이션</text>
+
+  <!-- 하단 URL -->
+  <text x="600" y="580" font-family="'Courier New',monospace" font-size="20" fill="#4c1d95" text-anchor="middle">bbong-shorts.vercel.app</text>
+
+  <!-- 하단 강조선 -->
+  <rect x="0" y="626" width="1200" height="4" fill="url(#accent)"/>
+</svg>
