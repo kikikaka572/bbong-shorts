@@ -33,8 +33,7 @@ export default function Index() {
     const idx = allItems.findIndex((s) => s.id === short.id);
     if (idx < 0) return;
     incrementClick(short.id);
-    const base = category === "전체" ? "" : `/${encodeURIComponent(category)}`;
-    navigate(`${base}/play?index=${idx}`);
+    navigate(`/${encodeURIComponent(category)}/play?index=${idx}`);
   };
 
   return (
