@@ -16,35 +16,46 @@ from datetime import datetime, timezone
 
 # ─────────────────────────────────────────────────────────────
 # 채널 설정
+# category: 연예인명 (카테고리 탭에 표시되는 이름)
 # channel_id 확인법:
-#   1. 채널 페이지 접속
-#   2. 페이지 소스(Ctrl+U) → "channelId" 검색
-#   3. UC로 시작하는 24자리 ID 복사
+#   1. 채널 페이지 접속 → 소스(Ctrl+U) → "channelId" 검색
+#   2. UC로 시작하는 24자리 ID 복사
 # ─────────────────────────────────────────────────────────────
 CHANNELS = [
-    # 신트로트 (확인 완료 ✅)
-    {"id": "UC3WZlO2Zl8NE1yIUgtwUtQw", "name": "임영웅",        "category": "신트로트"},
-    {"id": "UCH7JoVNZFpo1pOzZH-t5uew", "name": "영탁의 불쑥TV", "category": "신트로트"},
-    {"id": "UC4UnP3v-iaFaLdtKwp84Pmw", "name": "이찬원",        "category": "신트로트"},
-    {"id": "UCrLQ0ovys23H9xBV6U-Sd4A", "name": "정동원(JD1)",   "category": "신트로트"},
-    {"id": "UC3pa6gfuBooj8WUlluD-nNg", "name": "장민호",        "category": "신트로트"},
-    # 신트로트 (⚠️ 채널 ID 직접 확인 후 교체)
-    {"id": "UCxxxxxxxxxxxxxx06",        "name": "송가인",        "category": "신트로트"},
-    # 레전드 (⚠️ 채널 ID 직접 확인 후 교체)
-    {"id": "UCxxxxxxxxxxxxxx07",        "name": "나훈아",        "category": "레전드"},
-    {"id": "UCxxxxxxxxxxxxxx08",        "name": "태진아",        "category": "레전드"},
-    {"id": "UCxxxxxxxxxxxxxx09",        "name": "주현미",        "category": "레전드"},
-    # 오디션 (⚠️ 채널 ID 직접 확인 후 교체)
-    {"id": "UCxxxxxxxxxxxxxx10",        "name": "TV조선 트로트", "category": "오디션"},
+    # ✅ 채널 ID 확인 완료
+    {"id": "UC3WZlO2Zl8NE1yIUgtwUtQw", "name": "임영웅",        "category": "임영웅"},
+    {"id": "UCH7JoVNZFpo1pOzZH-t5uew", "name": "영탁의 불쑥TV", "category": "영탁"},
+    {"id": "UC4UnP3v-iaFaLdtKwp84Pmw", "name": "이찬원",        "category": "이찬원"},
+    {"id": "UCrLQ0ovys23H9xBV6U-Sd4A", "name": "정동원(JD1)",   "category": "정동원"},
+    {"id": "UC3pa6gfuBooj8WUlluD-nNg", "name": "장민호",        "category": "장민호"},
+    # ⚠️ 채널 ID 직접 확인 후 교체
+    {"id": "UCxxxxxxxxxxxxxx06",        "name": "송가인",        "category": "송가인"},
+    {"id": "UCxxxxxxxxxxxxxx07",        "name": "나훈아",        "category": "나훈아"},
+    {"id": "UCxxxxxxxxxxxxxx08",        "name": "태진아",        "category": "태진아"},
+    {"id": "UCxxxxxxxxxxxxxx09",        "name": "주현미",        "category": "주현미"},
+    {"id": "UCxxxxxxxxxxxxxx10",        "name": "TV조선 트로트", "category": "TV조선"},
 ]
 
 MAX_PER_CHANNEL  = 20    # 채널당 최대 수집 수
 MAX_DURATION_SEC = 60    # 쇼츠 기준 (60초 이하)
 
-YOUTUBE_API_KEY         = os.environ.get("YOUTUBE_API_KEY", "")
-SUPABASE_URL            = os.environ.get("SUPABASE_URL", "")
-SUPABASE_SERVICE_KEY    = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
-YT_BASE                 = "https://www.googleapis.com/youtube/v3"
+# YouTube Data API v3 무료 일일 할당량: 10,000 units
+# 90% 수준까지만 사용 (안전 마진 10%)
+QUOTA_BUDGET = 9_000
+# 엔드포인트별 단위 비용 (공식 문서 기준)
+QUOTA_COST = {
+    "channels":     1,
+    "playlistItems": 1,
+    "videos":       1,
+    "search":       100,  # search는 비용이 높으므로 사용 자제
+}
+
+YOUTUBE_API_KEY      = os.environ.get("YOUTUBE_API_KEY", "")
+SUPABASE_URL         = os.environ.get("SUPABASE_URL", "")
+SUPABASE_SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
+YT_BASE              = "https://www.googleapis.com/youtube/v3"
+
+_quota_used = 0
 
 
 # ─────────────────────────────────────────────────────────────
@@ -59,9 +70,17 @@ def parse_duration(iso: str) -> int:
 
 
 def yt_get(endpoint: str, params: dict) -> dict:
+    global _quota_used
+    cost = QUOTA_COST.get(endpoint, 1)
+    if _quota_used + cost > QUOTA_BUDGET:
+        raise RuntimeError(
+            f"YouTube API 할당량 한도 도달 ({_quota_used}/{QUOTA_BUDGET} units). "
+            "수집을 중단합니다. 내일 다시 실행하세요."
+        )
     params["key"] = YOUTUBE_API_KEY
     r = requests.get(f"{YT_BASE}/{endpoint}", params=params, timeout=15)
     r.raise_for_status()
+    _quota_used += cost
     return r.json()
 
 
@@ -138,7 +157,6 @@ def supabase_upsert(rows: list[dict]) -> None:
         "Content-Type":  "application/json",
         "Prefer":        "resolution=merge-duplicates",
     }
-    # Batch in chunks of 500 to stay within Supabase limits
     for i in range(0, len(rows), 500):
         chunk = rows[i : i + 500]
         r = requests.post(url, headers=headers, data=json.dumps(chunk), timeout=30)
@@ -155,10 +173,11 @@ def main() -> None:
     if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
         raise ValueError("SUPABASE_URL 또는 SUPABASE_SERVICE_ROLE_KEY 환경변수가 없습니다.")
 
+    print(f"YouTube API 할당량 한도: {QUOTA_BUDGET} units (일일 10,000 units의 90%)")
     all_shorts: list[dict] = []
 
     for ch in CHANNELS:
-        print(f"[{ch['category']}] {ch['name']} 수집 중...")
+        print(f"[{ch['category']}] {ch['name']} 수집 중... (누적 {_quota_used} units)")
         try:
             playlist_id = get_uploads_playlist(ch["id"])
             if not playlist_id:
@@ -170,14 +189,19 @@ def main() -> None:
             shorts    = shorts[:MAX_PER_CHANNEL]
             all_shorts.extend(shorts)
             print(f"  ✓ {len(shorts)}개 수집 완료")
+        except RuntimeError as e:
+            print(f"\n⚠️  {e}")
+            break
         except Exception as e:
             print(f"  ✗ 오류: {e}")
+
+    print(f"\nYouTube API 총 사용량: {_quota_used} / {QUOTA_BUDGET} units")
 
     if not all_shorts:
         print("수집된 쇼츠가 없습니다.")
         return
 
-    print(f"\n총 {len(all_shorts)}개 → Supabase upsert 중...")
+    print(f"총 {len(all_shorts)}개 → Supabase upsert 중...")
     supabase_upsert(all_shorts)
     print(f"\n✅ 완료: {len(all_shorts)}개 upsert")
 

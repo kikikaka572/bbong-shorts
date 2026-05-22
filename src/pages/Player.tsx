@@ -8,12 +8,13 @@ import type { Category, Short } from "@/types/shorts";
 const THRESHOLD = 50;
 const SLOTS = [-1, 0, 1] as const;
 
-const CAT_COLORS: Record<string, string> = {
-  레전드: "#8b5cf6",
-  신트로트: "#e8453c",
-  오디션: "#f59e0b",
-  커버: "#10b981",
-};
+const PALETTE = ["#e8453c", "#8b5cf6", "#f59e0b", "#10b981", "#3b82f6", "#ec4899", "#f97316"];
+
+function categoryColor(category: string): string {
+  let hash = 0;
+  for (const c of category) hash = (hash * 31 + c.charCodeAt(0)) & 0xffff;
+  return PALETTE[hash % PALETTE.length];
+}
 
 export default function Player() {
   const navigate = useNavigate();
@@ -191,7 +192,7 @@ function Slide({ short, active }: { short: Short; active: boolean }) {
       <div className="absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-black/95 via-black/60 to-transparent px-5 pb-10 pt-24">
         <span
           className="mb-1.5 block text-[11px] font-semibold"
-          style={{ color: CAT_COLORS[short.category] ?? "#e8453c" }}
+          style={{ color: categoryColor(short.category) }}
         >
           {short.category} · {fmtDuration(short.duration)}
         </span>

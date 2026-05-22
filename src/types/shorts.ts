@@ -1,4 +1,4 @@
-export type Category = "전체" | "레전드" | "신트로트" | "오디션" | "커버";
+export type Category = string; // "전체" 또는 연예인명
 
 export interface Short {
   id: string;
@@ -14,7 +14,21 @@ export interface Short {
   like_count: number;
   url: string;
   fetched_at: string;
+  created_at?: string | null;
 }
 
-export const CATEGORIES: Category[] = ["전체", "신트로트", "레전드", "오디션", "커버"];
+export const CATEGORIES: Category[] = [
+  "전체",
+  "임영웅",
+  "영탁",
+  "이찬원",
+  "정동원",
+  "장민호",
+  "송가인",
+  "나훈아",
+  "태진아",
+  "주현미",
+  "TV조선",
+];
+
 export const PAGE_SIZE = 20;

@@ -7,15 +7,24 @@ interface ShortsCardProps {
   onClick: (short: Short) => void;
 }
 
-const CATEGORY_COLORS: Record<string, string> = {
-  레전드: "#8b5cf6",
-  신트로트: "#e8453c",
-  오디션: "#f59e0b",
-  커버: "#10b981",
-};
+const PALETTE = ["#e8453c", "#8b5cf6", "#f59e0b", "#10b981", "#3b82f6", "#ec4899", "#f97316"];
+
+function categoryColor(category: string): string {
+  let hash = 0;
+  for (const c of category) hash = (hash * 31 + c.charCodeAt(0)) & 0xffff;
+  return PALETTE[hash % PALETTE.length];
+}
+
+const NEW_BADGE_MS = 7 * 24 * 60 * 60 * 1000;
+
+function isNewShort(createdAt?: string | null): boolean {
+  if (!createdAt) return false;
+  return Date.now() - new Date(createdAt).getTime() < NEW_BADGE_MS;
+}
 
 export function ShortsCard({ short, onClick }: ShortsCardProps) {
-  const catColor = CATEGORY_COLORS[short.category] ?? "#e8453c";
+  const catColor = categoryColor(short.category);
+  const showNew = isNewShort(short.created_at);
 
   return (
     <article
@@ -55,6 +64,13 @@ export function ShortsCard({ short, onClick }: ShortsCardProps) {
         >
           {short.category}
         </span>
+
+        {/* NEW badge */}
+        {showNew && (
+          <span className="absolute right-2 top-2 rounded bg-white px-2 py-0.5 text-[10px] font-bold text-[#e8453c]">
+            NEW
+          </span>
+        )}
 
         {/* Duration badge */}
         <span className="absolute bottom-2 right-2 rounded bg-black/75 px-1.5 py-0.5 text-[11px] text-white">
