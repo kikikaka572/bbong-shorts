@@ -1,15 +1,15 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { CategoryTabs } from "@/components/CategoryTabs";
 import { ShortsGrid } from "@/components/ShortsGrid";
-import { VideoModal } from "@/components/VideoModal";
 import { AdBanner } from "@/components/AdBanner";
 import { useShorts, useShortsCount } from "@/hooks/useShorts";
 import type { Category, Short } from "@/types/shorts";
 
 export default function Index() {
+  const navigate = useNavigate();
   const [category, setCategory] = useState<Category>("전체");
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const { data: count } = useShortsCount(category);
   const {
@@ -22,37 +22,17 @@ export default function Index() {
   } = useShorts(category);
 
   const allItems: Short[] = data?.pages.flatMap((p) => p) ?? [];
-  const selected = selectedIndex !== null ? (allItems[selectedIndex] ?? null) : null;
 
   const handleSelect = (short: Short) => {
     const idx = allItems.findIndex((s) => s.id === short.id);
-    setSelectedIndex(idx >= 0 ? idx : null);
-  };
-
-  const handleNext = () => {
-    if (selectedIndex === null) return;
-    const next = selectedIndex + 1;
-    // 끝에 가까워지면 추가 로드
-    if (next >= allItems.length - 3 && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-    if (next < allItems.length) setSelectedIndex(next);
-  };
-
-  const handlePrev = () => {
-    if (selectedIndex === null || selectedIndex === 0) return;
-    setSelectedIndex(selectedIndex - 1);
-  };
-
-  const handleCategoryChange = (cat: Category) => {
-    setCategory(cat);
-    setSelectedIndex(null);
+    if (idx < 0) return;
+    navigate(`/shorts?category=${encodeURIComponent(category)}&index=${idx}`);
   };
 
   return (
     <div className="min-h-screen">
       <Header />
-      <CategoryTabs active={category} onChange={handleCategoryChange} />
+      <CategoryTabs active={category} onChange={setCategory} />
 
       <main className="mx-auto max-w-[1400px] px-5 py-5 pb-16">
         <div className="mb-5">
@@ -73,15 +53,6 @@ export default function Index() {
           onSelect={handleSelect}
         />
       </main>
-
-      <VideoModal
-        short={selected}
-        onClose={() => setSelectedIndex(null)}
-        onNext={handleNext}
-        onPrev={handlePrev}
-        hasNext={selectedIndex !== null && selectedIndex < allItems.length - 1}
-        hasPrev={selectedIndex !== null && selectedIndex > 0}
-      />
     </div>
   );
 }
